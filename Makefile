@@ -1,8 +1,12 @@
-.PHONY: build
-build-win:
+.PHONY: install build-win build build-docker run-docker
+
+install:
+	@go get ./...
+
+build-win: install
 	@go build -o PortDomainService.exe ./cmd/service/
 	
-build:
+build: install
 	@go build -o PortDomainService ./cmd/service/
 
 build-docker:

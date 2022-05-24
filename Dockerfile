@@ -7,3 +7,5 @@ ADD . /src/
 WORKDIR /src/
 
 RUN make build
+
+ENTRYPOINT [ "/src/PortDomainService" ]

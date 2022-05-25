@@ -13,6 +13,8 @@ func main() {
 	var filename string
 
 	flag.StringVar(&filename, "filename", "challenge/ports.json", "The filename to parse for port information.")
+	flag.Parse()
+
 	log.Printf("Reading %s...\n", filename)
 
 	records := make(chan interface{}, 1000)

@@ -36,5 +36,5 @@ func ParsePort(dec *json.Decoder) interface{} {
 	}
 
 	p.ID = fmt.Sprintf("%s", t)
-	return p
+	return &p
 }

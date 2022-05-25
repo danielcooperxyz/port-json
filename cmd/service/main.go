@@ -10,14 +10,27 @@ import (
 
 func main() {
 	var filename string
-	flag.StringVar(&filename, "filename", "challenge/ports.json", "The filename to parse for port information.")
 
+	flag.StringVar(&filename, "filename", "challenge/ports.json", "The filename to parse for port information.")
 	log.Printf("Reading %s...\n", filename)
 
-	readJsonFile(filename)
+	portsIn := make(chan *Port)
+	dataStorage := map[string]*Port{}
+
+	go readJsonFile(filename, portsIn)
+
+	for p := range portsIn {
+		if _, ok := dataStorage[p.ID]; ok {
+			fmt.Printf("Found: %s\n", p.ID)
+		}
+
+		dataStorage[p.ID] = p
+	}
 }
 
 type Port struct {
+	ID string
+
 	Name     string
 	City     string
 	Country  string
@@ -31,7 +44,7 @@ type Port struct {
 	Unlocs      []string
 }
 
-func readJsonFile(filepath string) {
+func readJsonFile(filepath string, records chan *Port) {
 	f, err := os.Open(filepath)
 	if err != nil {
 		log.Fatal(err)
@@ -52,15 +65,16 @@ func readJsonFile(filepath string) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("%T: %v\n", t, t)
+
 		p := Port{}
 		err = dec.Decode(&p)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		log.Printf("%#v\n", p)
-		return
+		p.ID = fmt.Sprintf("%s", t)
+
+		records <- &p
 	}
 
 	// read closing bracket
@@ -69,4 +83,6 @@ func readJsonFile(filepath string) {
 		log.Fatal(err)
 	}
 	fmt.Printf("%T: %v\n", t, t)
+
+	close(records)
 }

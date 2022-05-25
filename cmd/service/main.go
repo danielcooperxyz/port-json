@@ -5,11 +5,15 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/danielcooperxyz/port-json/parse"
 )
 
 func main() {
+	catchKillSignals()
+
 	var filename string
 
 	flag.StringVar(&filename, "filename", "challenge/ports.json", "The filename to parse for port information.")
@@ -31,9 +35,24 @@ func main() {
 		p := rec.(*parse.Port)
 
 		if _, ok := portMap[p.ID]; ok {
-			fmt.Printf("Found: %s\n", p.ID)
+			fmt.Printf("Previously stored: %s\n", p.ID)
 		}
 
 		portMap[p.ID] = p
 	}
+}
+
+func catchKillSignals() {
+	sigc := make(chan os.Signal, 1)
+	signal.Notify(sigc,
+		syscall.SIGHUP,
+		syscall.SIGINT,
+		syscall.SIGTERM,
+		syscall.SIGQUIT)
+	go func() {
+		s := <-sigc
+
+		log.Printf("Exit signal '%v' received, closing...\n", s)
+		os.Exit(1)
+	}()
 }

@@ -2,7 +2,6 @@ package parse
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 )
@@ -17,7 +16,7 @@ func ParseJson(input io.Reader, records chan interface{}, parseRecord RecordFunc
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("%T: %v\n", t, t)
+	log.Printf("%T: %v\n", t, t)
 
 	for dec.More() {
 		record := parseRecord(dec)
@@ -29,7 +28,7 @@ func ParseJson(input io.Reader, records chan interface{}, parseRecord RecordFunc
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("%T: %v\n", t, t)
+	log.Printf("%T: %v\n", t, t)
 
 	close(records)
 }

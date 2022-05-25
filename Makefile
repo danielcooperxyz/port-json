@@ -5,6 +5,9 @@ install:
 
 build-win: install
 	@go build -o PortDomainService.exe ./cmd/service/
+
+test: install
+	@go test ./...
 	
 build: install
 	@go build -o PortDomainService ./cmd/service/

@@ -21,3 +21,9 @@ To compile and run a docker image
 ```
 make run-docker
 ```
+
+## Tests
+You can run tests using the standard golang test framework. Convienience commands are also provided in the makefile.
+```
+make test
+```
